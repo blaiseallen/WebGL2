@@ -73,6 +73,19 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 
 
+
+var target_size = .08;
+var target_origin_x = 0.0;
+var x_trans_direction = "right";
+var target_origin_y;
+var y_trans_direction ;
+var x_bound_left = -0.3;
+var x_bound_right = 0.3;
+var y_bound_top;
+var y_bound_bottom;
+var i = 0;
+
+
 function main() {
 
   // Retrieves the Canvas & Sets the Context
@@ -127,8 +140,8 @@ function main() {
 
   //the following lines create a buffer for binding to the same WebGL2 bindpoint, being that you can only use a particular bind point once
   //for binding a buffer at a given time, this buffer stores the vertex data that will be animated separately from the scene vertices 
-  var animation_buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, animation_buffer);
+  var target_buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, target_buffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(all_data), gl.STATIC_DRAW);
  
 
@@ -152,9 +165,9 @@ function main() {
   ])
   
   //sets scaled to 1 for all vertices in the canvas, stating every vetex or primitive shape should be rendered to its current size/specf.
-  gl.uniform2f(u_scale_location, -.5, 1.0);
+  gl.uniform2f(u_scale_location, 1.0, 1.0);
   //set the rotational values for all vertices present within the canvas, essentially sets the scene at a head-on point of view and faces it right side up
-  gl.uniform2f(u_rotation_location, -1.0, 1.0);
+  gl.uniform2f(u_rotation_location, 0.0, 1.0);
   //sets the translational values for all vertices present within the canvas, essentially states that all vertices should remain in their "hard-coded" positions within the canvas
   gl.uniform2f(u_translation_location, 0.0, 0.0);
  
@@ -170,7 +183,7 @@ function main() {
   gl.drawArrays(gl.LINES, 15, 10);
 
   //Binds the buffer again and states how the a_position attribute variable should have its attributes pulled out of the buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, animation_buffer);
+  gl.bindBuffer(gl.ARRAY_BUFFER, target_buffer);
   gl.vertexAttribPointer(a_position_location, 2, gl.FLOAT, false, 0, 0);
 
   
@@ -206,6 +219,96 @@ function main() {
   gl.uniform1i(u_index_location, 6);
   gl.drawArrays(gl.TRIANGLE_FAN, 2520, 360);
   
+  window.requestAnimationFrame(animate_target);
+
+  function animate_target() {
+   
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+    // --SCENE--
+    gl.bindBuffer(gl.ARRAY_BUFFER, scene_buffer);
+    gl.vertexAttribPointer(a_position_location, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform4fv(u_color_location,   [
+      0.0, 0.0, 0.0, 0.8, //Dark     - Gray   = [0]
+      0.0, 0.0, 0.0, 0.5, //Light    - Gray   = [1]
+      0.0, 0.0, 0.0, 0.4, //Lightest - Gray   = [2]
+      1.0, 0.0, 0.0, 1.0, //         - Red    = [3]
+      0.0, 0.0, 0.0, 0.0, //         - White  = [4]
+      0.0, 0.0, 0.0, 1.0, //         - Black  = [5]
+      0.0, 1.0, 0.0, 1.0, //         - Green  = [6]
+    ]);
+    gl.uniform2f(u_scale_location, 1.0, 1.0);
+    gl.uniform2f(u_rotation_location, 0.0, 1.0);
+    gl.uniform2f(u_translation_location, 0.0, 0.0);
+    gl.uniform1i(u_index_location, 1);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.uniform1i(u_index_location, 2);
+    gl.drawArrays(gl.TRIANGLES, 6, 9);
+    gl.uniform1i(u_index_location, 3);
+    gl.drawArrays(gl.LINES, 15, 10);
+    
+    
+    
+    // --TARGET--
+    gl.bindBuffer(gl.ARRAY_BUFFER, target_buffer);
+    gl.vertexAttribPointer(a_position_location, 2, gl.FLOAT, false, 0, 0);
+  
+    
+    if (target_origin_x + (target_size/2) < x_bound_right && x_trans_direction == "right") {
+    
+      gl.uniform2f(u_scale_location, 1.0, 1.0);
+      gl.uniform2f(u_rotation_location, 0.0, 1.0);
+      gl.uniform2f(u_translation_location, 0.01, 0.0);
+      target_origin_x += 0.01;
+      console.log("first if");
+    }
+
+    if (target_origin_x + (target_size/2) >= x_bound_right && x_trans_direction == "right") {
+      
+      x_trans_direction = "left";
+      console.log("second if");
+    
+    }
+
+
+    if (target_origin_x - (target_size/2) > x_bound_left && x_trans_direction == "left") {
+      
+      gl.uniform2f(u_scale_location, 1.0, 1.0);
+      gl.uniform2f(u_rotation_location, 0.0, 1.0);
+      gl.uniform2f(u_translation_location, -0.01, 0.0);
+      target_origin_x -= 0.01;
+      console.log("third if");
+
+
+    }
+
+    if (target_origin_x - (target_size/2) <= x_bound_left && x_trans_direction == "left") {
+
+      x_trans_direction = "right";
+      console.log("fourth if");
+
+    }
+
+    gl.uniform1i(u_index_location, 5);
+    gl.drawArrays(gl.LINE_LOOP, 0, 360);  
+    gl.uniform1i(u_index_location, 3);
+    gl.drawArrays(gl.TRIANGLE_FAN, 360, 360);
+    gl.uniform1i(u_index_location, 5);
+    gl.drawArrays(gl.LINE_LOOP, 720, 360); 
+    gl.uniform1i(u_index_location, 4);
+    gl.drawArrays(gl.TRIANGLE_FAN, 1080, 360);
+    gl.uniform1i(u_index_location, 5);
+    gl.drawArrays(gl.LINE_LOOP, 1440, 360);
+    gl.uniform1i(u_index_location, 3);
+    gl.drawArrays(gl.TRIANGLE_FAN, 1800, 360);
+    gl.uniform1i(u_index_location, 5);
+    gl.drawArrays(gl.LINE_LOOP, 2160, 360); 
+    gl.uniform1i(u_index_location, 6);
+    gl.drawArrays(gl.TRIANGLE_FAN, 2520, 360);
+    requestAnimationFrame(animate_target);
+   
+  }
 
 }
 
@@ -345,11 +448,5 @@ while (i < data_7.length) {
   return all_geom;
 }
 
-/*
 
 
-
-function animate() {
-
-}
-*/
