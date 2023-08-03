@@ -62,10 +62,15 @@ const utranslationlocation = gl.getUniformLocation(program, "u_translation");
 
 const data = [
           /*--VETICES--*/                                               /*--COLORS--*/
-    0.3, 0.2,    0.6, 0.2,    0.45, 0.8,   /*--First  Triangle--*/   0.5,  0.0,  0.5,  1.0, /*--Purple--*/
-   -0.3, 0.2,   -0.6, 0.2,   -0.45, 0.8,   /*--Second Triangle--*/   0.5,  0.0,  0.5,  1.0, /*--Purple--*/
-   -0.3,-0.2,    0.3,-0.2,    0.0, -0.8,   /*--Third  Triangle--*/   0.42, 0.0,  0.66, 1.0, /*--Blueish Purple--*/
-
+    0.3, 0.2,    0.6, 0.2,    0.45, 0.8,   /*--First  Triangle--*/   0.5,    0.0,   0.5,   1.0, /*--First  Triangles Colors--*/
+   -0.3, 0.2,   -0.6, 0.2,   -0.45, 0.8,   /*--Second Triangle--*/   0.5,    0.0,   0.5,   1.0, /*--First  Triangles Colors--*/
+   -0.3,-0.2,    0.3,-0.2,    0.0, -0.8,   /*--Third  Triangle--*/   0.5,    0.0,   0.5,   1.0, /*--First  Triangles Colors--*/
+                                                                     0.32,   0.0,   0.7,   1.0, /*--Second Triangles Colors--*/
+                                                                     0.32,   0.0,   0.7,   1.0, /*--Second Triangles Colors--*/
+                                                                     0.32,   0.0,   0.7,   1.0, /*--Second Triangles Colors--*/
+                                                                     0.7,    0.0,   0.32,  1.0, /*--Third  Triangles Colors--*/
+                                                                     0.7,    0.0,   0.32,  1.0, /*--Third  Triangles Colors--*/
+                                                                     0.7,    0.0,   0.32,  1.0, /*--Third  Triangles Colors--*/
 ];
 
 gl.enableVertexAttribArray(apositonlocation);
@@ -88,26 +93,29 @@ gl.clearColor(0.0, 0.0, 0.0, 1.0);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
 
-gl.drawArrays(gl.LINE_LOOP, 0, 3);
-gl.drawArrays(gl.LINE_LOOP, 5, 3);
-gl.drawArrays(gl.LINE_LOOP, 10, 3)
+gl.drawArrays(gl.TRIANGLE_FAN, 0, 3);
+gl.drawArrays(gl.TRIANGLE_FAN, 5, 3);
+gl.drawArrays(gl.TRIANGLE_FAN, 10, 3)
+
 
 /*
 
 Ok so; drawArrays() takes the following paramaters, (draw_type, first_index / offset, count),
 the vertex-attribute-array is treating the data in the buffer in this manner, first index is 0
 which contains the first two floats, i.e. point (0.3, 0.2) above, that should mean that the next
-two remain points in the first triangle should lye in indexes 1 and 2. From what I gathered its
-treating the 4 color values as on vector of values stored in a single index, because if you change
-the drawArrays() call to something like start from indicie 3 and draw the next 3 points, including
-the one at index 3, you'll get some funky output; what I dont understand is why I cannot get my colors
-to render on the other two triangles properly, this is close as I can get it, and everytime I change
-the vertexAtrribPointer for apositionlocation to the correct stride i.e. 10*4, meaning there are 10 
-components multiplied by 4 bytes, because 1 float = 4 bytes, you get a single triangle in which I
-have no data referenceing, very confusing, anyways I degress webgl can be extreamly rewarding and 
-irratating at the same time, also I urge you to try changing the vertexAtrribPointer to the correct
-value and see for yourself that no possible combination of draw calls can get the output anywhere close
-to as correct as I have now 
+two remain points in the first triangle should lye in indexes 1 and 2 thus why the first parameter
+is set to 0 and the count is set to 3. 
+
+From what I gathered its treating the 4 color values as one vector of values stored in a single index,
+because if you change the drawArrays() call to something like start from indicie 3 and draw the next 
+3 points, including index 3, you'll get some funky output; what I dont understand is why I cannot get
+my colors to render on the other two triangles properly, this is close as I can get it, and everytime
+I change the vertexAtrribPointer for apositionlocation to the correct stride i.e. 10*4, meaning there
+are 10 components multiplied by 4 bytes between the first set of vertices for triangle 1 and the second
+set of vertices for triangle 2 I get a single triangle, I also realized that a single vec4 of color values 
+is used for each vertice of a particular triangle
+
+PLEASE HELP ME UNDERSTAND THESE BS POINTERS!!!!
 
 
 */
