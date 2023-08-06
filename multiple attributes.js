@@ -54,34 +54,41 @@ gl.attachShader(program, fragmentShader);
 gl.linkProgram(program);
 gl.useProgram(program);
 
-const apositonlocation = gl.getAttribLocation(program, "a_position");
+const apositionlocation = gl.getAttribLocation(program, "a_position");
 const acolorlocation = gl.getAttribLocation(program, "a_color");
 const uscalelocation = gl.getUniformLocation(program, "u_scale");
 const urotationlocation = gl.getUniformLocation(program, "u_rotation");
 const utranslationlocation = gl.getUniformLocation(program, "u_translation");
 
-const data = [
-          /*--VETICES--*/                                               /*--COLORS--*/
-    0.3, 0.2,    0.6, 0.2,    0.45, 0.8,   /*--First  Triangle--*/   0.5,    0.0,   0.5,   1.0, /*--First  Triangles Colors--*/
-   -0.3, 0.2,   -0.6, 0.2,   -0.45, 0.8,   /*--Second Triangle--*/   0.5,    0.0,   0.5,   1.0, /*--First  Triangles Colors--*/
-   -0.3,-0.2,    0.3,-0.2,    0.0, -0.8,   /*--Third  Triangle--*/   0.5,    0.0,   0.5,   1.0, /*--First  Triangles Colors--*/
-                                                                     0.32,   0.0,   0.7,   1.0, /*--Second Triangles Colors--*/
-                                                                     0.32,   0.0,   0.7,   1.0, /*--Second Triangles Colors--*/
-                                                                     0.32,   0.0,   0.7,   1.0, /*--Second Triangles Colors--*/
-                                                                     0.7,    0.0,   0.32,  1.0, /*--Third  Triangles Colors--*/
-                                                                     0.7,    0.0,   0.32,  1.0, /*--Third  Triangles Colors--*/
-                                                                     0.7,    0.0,   0.32,  1.0, /*--Third  Triangles Colors--*/
-];
+const data = new Float32Array([
+    0.3, 0.2,    0.6, 0.2,    0.45, 0.8,    0.5,    0.0,   0.5,   1.0, 
+   -0.3, 0.2,   -0.6, 0.2,   -0.45, 0.8,    0.1,    0.0,   0.5,   1.0, 
+   -0.3,-0.2,    0.3,-0.2,    0.0, -0.8,    0.5,    0.0,   0.5,   1.0,
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.0,    0.0,   0.0,   0.0, //>>>> This Row does nothing 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.0,    0.0,   0.0,   0.0, //>>>> This Row does nothing 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.5,    0.0,   0.5,   1.0, 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.1,    0.0,   0.5,   1.0, 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.5,    0.0,   0.5,   1.0, 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.0,    0.0,   0.0,   0.0, //>>>> This Row does nothing 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.0,    0.0,   0.0,   0.0, //>>>> This Row does nothing 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.2,    0.76,   0.2,  1.0, 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.1,    0.0,   0.86,  1.0, 
+    0.0, 0.0,    0.0, 0.0,    0.0,  0.0,    0.44,   0.0,   0.22,  1.0, 
 
-gl.enableVertexAttribArray(apositonlocation);
+]);
+
+gl.enableVertexAttribArray(apositionlocation);
 gl.enableVertexAttribArray(acolorlocation);
 
 const buffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
+//can set default values using vertexattrib method and do component testing by turning off or disabling a attribute
+gl.vertexAttrib2f(apositionlocation, 0.0, 0.0);
+gl.vertexAttrib4f(acolorlocation, 1.0, 0.0, 0.0, 1.0);
 
-gl.vertexAttribPointer(apositonlocation, 2, gl.FLOAT, false, 0, 0);
+gl.vertexAttribPointer(apositionlocation, 2, gl.FLOAT, false, 0, 0);
 gl.vertexAttribPointer(acolorlocation, 4, gl.FLOAT, false, 10*4, 6*4);
 
 gl.uniform2f(uscalelocation, 1.0, 1.0);
@@ -92,10 +99,9 @@ gl.uniform2f(utranslationlocation, 0.0, 0.0);
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
 gl.clear(gl.COLOR_BUFFER_BIT);
 
-
 gl.drawArrays(gl.TRIANGLE_FAN, 0, 3);
 gl.drawArrays(gl.TRIANGLE_FAN, 5, 3);
-gl.drawArrays(gl.TRIANGLE_FAN, 10, 3)
+gl.drawArrays(gl.TRIANGLE_FAN, 10, 3);
 
 
 /*
