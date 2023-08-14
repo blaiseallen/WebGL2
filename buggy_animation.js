@@ -77,12 +77,8 @@ function createProgram(gl, vertexShader, fragmentShader) {
 var target_size = .08;
 var target_origin_x = 0.0;
 var x_trans_direction = "right";
-var target_origin_y;
-var y_trans_direction ;
 var x_bound_left = -0.3;
 var x_bound_right = 0.3;
-var y_bound_top;
-var y_bound_bottom;
 var i = 0;
 
 
@@ -450,3 +446,128 @@ while (i < data_7.length) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+animate_target();
+
+function animate_target() {
+ 
+  gl.clearColor(0, 0, 0, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  
+  // --SCENE--
+  gl.bindBuffer(gl.ARRAY_BUFFER, scene_buffer);
+  gl.enableVertexAttribArray(a_position_location);
+  gl.vertexAttribPointer(a_position_location, 2, gl.FLOAT, false, 0, 0);
+  
+  
+  gl.uniform2f(u_scale_location, 1.0, 1.0);
+  gl.uniform2f(u_rotation_location, 0.0, 1.0);
+  gl.uniform2f(u_translation_location, 0.0, 0.0);
+  gl.uniform1i(u_index_location, 1);
+  gl.drawArrays(gl.TRIANGLES, 47, 3);
+  gl.drawArrays(gl.TRIANGLES, 48, 3);
+  gl.drawArrays(gl.TRIANGLES, 32, 9);
+  gl.uniform1i(u_index_location, 0);
+  gl.drawArrays(gl.TRIANGLES, 51, 3);
+  gl.drawArrays(gl.TRIANGLES, 54, 3);
+  gl.drawArrays(gl.TRIANGLES, 57, 3);
+  gl.drawArrays(gl.TRIANGLES, 60, 3);
+  gl.uniform1i(u_index_location, 3);
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+  gl.drawArrays(gl.TRIANGLES, 8, 3);
+  gl.drawArrays(gl.TRIANGLES, 9, 3);
+  gl.uniform1i(u_index_location, 5);
+  gl.drawArrays(gl.TRIANGLES, 41, 3);
+  gl.drawArrays(gl.TRIANGLES, 42, 4);
+  gl.drawArrays(gl.TRIANGLES, 12, 3);
+  gl.drawArrays(gl.TRIANGLES, 13, 3);
+  gl.drawArrays(gl.TRIANGLES, 24, 3);
+  gl.drawArrays(gl.TRIANGLES, 25, 3);
+  gl.uniform1i(u_index_location, 1);
+  gl.drawArrays(gl.TRIANGLES, 63, 3);
+  gl.drawArrays(gl.TRIANGLES, 66, 3);
+  gl.uniform1i(u_index_location, 8);
+  gl.drawArrays(gl.LINES, 4, 2);
+  gl.drawArrays(gl.LINES, 6, 2);
+  gl.drawArrays(gl.LINES, 8, 26);
+  gl.drawArrays(gl.LINES, 32, 2);
+  gl.drawArrays(gl.LINES, 35, 2);
+  gl.drawArrays(gl.LINES, 41, 10);
+  
+  
+  
+  // --TARGET--
+  gl.bindBuffer(gl.ARRAY_BUFFER, target_buffer);
+  gl.vertexAttribPointer(a_position_location, 2, gl.FLOAT, false, 0, 0);
+
+  if (target_origin_x + (target_size/2) < x_bound_right && x_trans_direction == "right") {
+   
+    gl.uniform2f(u_translation_location, target_origin_x, 0.0);
+    target_origin_x += 0.01;
+    console.log("first if");
+  }
+
+  if (target_origin_x + (target_size/2) >= x_bound_right && x_trans_direction == "right") {
+    
+    x_trans_direction = "left";
+    console.log("second if");
+  
+  }
+
+
+  if (target_origin_x - (target_size/2) > x_bound_left && x_trans_direction == "left") {
+    
+    gl.uniform2f(u_translation_location, target_origin_x, 0.0);
+    target_origin_x -= 0.01;
+    console.log("third if");
+
+
+  }
+
+  if (target_origin_x - (target_size/2) <= x_bound_left && x_trans_direction == "left") {
+
+    x_trans_direction = "right";
+    console.log("fourth if");
+
+  }
+
+gl.uniform2f(u_scale_location, 1.0, 1.0);
+gl.uniform2f(u_rotation_location, 0.0, 1.0);
+gl.uniform1i(u_index_location, 8);
+gl.drawArrays(gl.LINE_LOOP, 0, 360);  
+gl.uniform1i(u_index_location, 6);
+gl.drawArrays(gl.TRIANGLE_FAN, 360, 360);
+gl.uniform1i(u_index_location, 8);
+gl.drawArrays(gl.LINE_LOOP, 720, 360);
+gl.uniform1i(u_index_location, 7);
+gl.drawArrays(gl.TRIANGLE_FAN, 1080, 360);
+gl.uniform1i(u_index_location, 8);
+gl.drawArrays(gl.LINE_LOOP, 1440, 360);
+gl.uniform1i(u_index_location, 6);
+gl.drawArrays(gl.TRIANGLE_FAN, 1800, 360);  
+gl.uniform1i(u_index_location, 8);
+gl.drawArrays(gl.LINE_LOOP, 2160, 360);  
+gl.uniform1i(u_index_location, 9);
+gl.drawArrays(gl.TRIANGLE_FAN, 2520, 360);
+
+
+requestAnimationFrame(animate_target);
+}
