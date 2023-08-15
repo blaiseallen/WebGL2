@@ -1,0 +1,18 @@
+	Evaluation of Proof of Concept
+o	Optimization Issue:
+	Currently using four buffers with 32-bit floats, leading to higher memory usage.
+	Unintentional data redundancy: data optimization is needed.
+	Utilize alternative WebGL bind points (e.g., ELEMENT_ARRAY_BUFFER) to reduce redundancy.
+	Optimize memory usage by using 8-bit integers for index values and 32-bit floats for repetitive vertex data.
+	Utilize attributes, vertex-attribute pointers, and efficient draw calls for improved memory usage and data organization.
+o	Callback Function Complexity:
+	Caller and callback functions used to create circles for target object.
+	Callback hell scenario in JavaScript due to multiple nested functions.
+	Unable to get return value from original call to the caller function.
+	Created additional checks within callback function to execute main() and start the game.
+	Created scoping issues affecting user sights and aim, hindering core gameplay mechanics.
+o	Collision Detection Issue:
+	Collision detection check for target shooting is imperfect.
+	Checking distance between click point and target origin compared to target border.
+	Not foolproof; occasional buggy return values for target hit detection.
+	Need to refine collision detection logic to ensure accurate and consistent target hit detection.
